@@ -1,7 +1,5 @@
 # 🏦 Transparent Credit Scoring with Explainable Machine Learning
 
-(still uploading my code)
-
 A machine learning project focused on building an **interpretable** and **accurate** credit scoring system, developed for the **Engineering Foundations in FinTech (IEDA4500)** course at **HKUST**.
 
 ## 🧠 Project Objectives
