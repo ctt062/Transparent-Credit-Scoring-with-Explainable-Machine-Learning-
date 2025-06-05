@@ -23,6 +23,29 @@ GRAPHS_DIR = os.path.join(PROJECT_ROOT, 'graphs')
 OUTPUT_CSV_DIR = PROJECT_ROOT # Save CSVs to project root
 
 def main():
+    """
+    Main function to execute the credit scoring pipeline.
+
+    The pipeline consists of the following steps:
+    1.  Load training and testing data.
+    2.  Clean the datasets (handle missing values, data types, formatting).
+    3.  Perform feature engineering to create new informative features.
+    4.  Encode categorical features and scale numerical features.
+    5.  Prepare feature (X) and target (y) sets for modeling.
+    6.  Initialize machine learning models (Logistic Regression, Random Forest, XGBoost).
+    7.  Perform cross-validation on the full training data for each model.
+    8.  Train the models on the designated training split.
+    9.  Evaluate the trained models on the validation split (accuracy, classification report, confusion matrix).
+    10. Plot ROC curves for the models on the validation split.
+    11. Generate and save SHAP (SHapley Additive exPlanations) plots for model interpretability,
+        adhering to the logic of the original project notebook.
+    12. Make predictions on the processed test set using the trained models.
+    13. Save the test set predictions (combined and for Logistic Regression specifically,
+        including probabilities) to CSV files in the project root directory.
+
+    All generated plots (confusion matrices, ROC curves, SHAP plots) are saved
+    to the 'graphs' directory in the project root.
+    """
     # --- Path Setup ---
     if not os.path.exists(GRAPHS_DIR):
         os.makedirs(GRAPHS_DIR)

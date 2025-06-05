@@ -4,6 +4,27 @@ import re
 from sklearn.preprocessing import LabelEncoder, StandardScaler
 
 def clean_dataset(df):
+    """
+    Cleans the input DataFrame by performing several operations:
+    - Drops specified irrelevant ID and personal information columns.
+    - Converts designated numeric columns to numeric types, coercing errors.
+    - Cleans the 'Age' column to ensure positive numeric values.
+    - Converts 'Credit_History_Age' from a string format (e.g., "X Years and Y Months") 
+      to total months as a numeric type.
+    - Imputes missing values in specified categorical columns using the mode.
+    - Imputes missing values in numeric columns (including processed 'Credit_History_Age') 
+      using the median.
+
+    Parameters:
+    ----------
+    df : pd.DataFrame
+        The input DataFrame to be cleaned.
+
+    Returns:
+    -------
+    pd.DataFrame
+        The cleaned DataFrame.
+    """
     df = df.drop(columns=['ID', 'Customer_ID', 'Name', 'SSN'], errors='ignore')
 
     num_cols = ['Age', 'Annual_Income', 'Monthly_Inhand_Salary', 'Num_Bank_Accounts', 'Num_Credit_Card', 
@@ -69,6 +90,34 @@ def clean_dataset(df):
     return df
 
 def encode_scale_data(train_df, test_df):
+    """
+    Encodes categorical features and scales numeric features for training and test DataFrames.
+
+    - Encodes specified categorical columns using LabelEncoder. The encoder is fit on the 
+      training data and used to transform both training and test data.
+    - Encodes the target variable ('Credit_Score') in the training data using LabelEncoder.
+    - Scales common numeric features (present in both train and test, excluding the target) 
+      using StandardScaler. The scaler is fit on the training data.
+
+    Parameters:
+    ----------
+    train_df : pd.DataFrame
+        The training DataFrame.
+    test_df : pd.DataFrame
+        The test DataFrame.
+
+    Returns:
+    -------
+    tuple
+        A tuple containing:
+        - train_df_processed (pd.DataFrame): The processed training DataFrame.
+        - test_df_processed (pd.DataFrame): The processed test DataFrame.
+        - encoders (dict): A dictionary mapping column names to fitted LabelEncoder objects 
+                           for categorical features.
+        - target_le (LabelEncoder): The fitted LabelEncoder for the target variable.
+        - scaler (StandardScaler): The fitted StandardScaler for numeric features.
+        - common_numeric_cols (list): List of common numeric columns that were scaled.
+    """
     cat_cols_to_encode = ['Occupation','Type_of_Loan','Credit_Mix',
                           'Payment_of_Min_Amount','Payment_Behaviour']
     encoders = {}

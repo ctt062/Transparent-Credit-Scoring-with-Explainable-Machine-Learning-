@@ -2,6 +2,29 @@ import pandas as pd
 import numpy as np
 
 def engineer_features(df):
+    """
+    Engineers new features from existing columns in the DataFrame.
+
+    - Maps 'Month' string names to numeric representations (1-12).
+    - Creates ratio features:
+        - 'Debt_to_Income': Outstanding_Debt / Annual_Income.
+        - 'Loan_to_BankAccount_Ratio': Num_of_Loan / Num_Bank_Accounts.
+        - 'EMI_to_Salary': Total_EMI_per_month / Monthly_Inhand_Salary.
+        - 'Credit_Inquiry_per_Loan': Num_Credit_Inquiries / Num_of_Loan.
+    - Handles potential division by zero by adding a small epsilon to denominators.
+    - Replaces any infinite values created with NaNs.
+    - Imputes NaNs in newly created features using their respective medians.
+
+    Parameters:
+    ----------
+    df : pd.DataFrame
+        The input DataFrame on which to perform feature engineering.
+
+    Returns:
+    -------
+    pd.DataFrame
+        The DataFrame with newly engineered features.
+    """
     month_map = {'January':1,'February':2,'March':3,'April':4,'May':5,'June':6,
                  'July':7,'August':8,'September':9,'October':10,'November':11,'December':12}
     

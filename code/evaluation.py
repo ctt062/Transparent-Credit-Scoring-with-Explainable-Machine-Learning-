@@ -5,6 +5,26 @@ from sklearn.preprocessing import label_binarize
 from plot_utils import plot_confusion_matrix_custom, save_plot
 
 def evaluate_classification_models(trained_models, X_val, y_val, target_le, output_dir):
+    """
+    Evaluates trained classification models on a validation set.
+
+    For each model, it calculates and prints accuracy and a classification report.
+    It also generates and saves a custom confusion matrix plot.
+    Skips evaluation for models that were not trained successfully (if None).
+
+    Parameters:
+    ----------
+    trained_models : dict
+        A dictionary of trained model objects.
+    X_val : pd.DataFrame or np.ndarray
+        The validation feature matrix.
+    y_val : pd.Series or np.ndarray
+        The validation target variable.
+    target_le : LabelEncoder
+        The LabelEncoder fitted on the target variable, used to get class names.
+    output_dir : str
+        The directory where confusion matrix plots will be saved.
+    """
     print("\nEvaluating Models on Validation Set...")
     for name, model in trained_models.items():
         if model is None: # If model failed to train
@@ -24,6 +44,26 @@ def evaluate_classification_models(trained_models, X_val, y_val, target_le, outp
 
 
 def plot_roc_curves_multiclass(trained_models, X_val, y_val, target_le, output_dir):
+    """
+    Plots Receiver Operating Characteristic (ROC) curves for multiple models.
+
+    For multi-class problems, it plots one-vs-rest (OvR) ROC curves for each class
+    of each model. It also attempts to calculate and print an OvR ROC-AUC score.
+    The combined plot is saved to a file. Handles cases with fewer than 2 classes in y_val.
+
+    Parameters:
+    ----------
+    trained_models : dict
+        A dictionary of trained model objects.
+    X_val : pd.DataFrame or np.ndarray
+        The validation feature matrix.
+    y_val : pd.Series or np.ndarray
+        The validation target variable.
+    target_le : LabelEncoder
+        The LabelEncoder fitted on the target variable, used for class names.
+    output_dir : str
+        The directory where the ROC curve plot will be saved.
+    """
     print("\nPlotting ROC Curves...")
     
     # Binarize y_val for multi-class ROC

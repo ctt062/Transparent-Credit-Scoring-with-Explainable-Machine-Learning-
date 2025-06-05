@@ -6,6 +6,34 @@ import numpy as np
 from plot_utils import save_plot
 
 def generate_shap_explanations(trained_models, X_train_df, X_val_df, target_le, output_dir):
+    """
+    Generates and saves SHAP (SHapley Additive exPlanations) plots for models.
+
+    This function attempts to replicate the SHAP logic from the original notebook:
+    - Logistic Regression: Uses shap.Explainer with model.predict and X_train as background.
+                           Plots a beeswarm and a bar summary plot.
+    - Random Forest: Uses shap.Explainer with model.predict. A sample of X_val is used
+                     as background data for the explainer and for the data to be explained.
+                     Plots a summary plot.
+    - XGBoost: Uses shap.Explainer with the model (no explicit background for constructor).
+               Explains X_val. Plots a summary plot.
+
+    Handles different structures of SHAP values returned by shap.Explainer (single array
+    for model.predict output, or list of arrays if explainer infers per-class explanation).
+
+    Parameters:
+    ----------
+    trained_models : dict
+        A dictionary of trained model objects.
+    X_train_df : pd.DataFrame
+        The training feature DataFrame, used as background data for some explainers.
+    X_val_df : pd.DataFrame
+        The validation feature DataFrame, used as the data to explain.
+    target_le : LabelEncoder
+        The LabelEncoder fitted on the target variable, used to get original class names.
+    output_dir : str
+        The directory where SHAP plots will be saved.
+    """
     print("\nGenerating SHAP Explanations (Original Logic Adherence)...")
     
     # --- Logistic Regression ---
