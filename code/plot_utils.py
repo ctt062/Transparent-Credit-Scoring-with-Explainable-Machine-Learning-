@@ -2,15 +2,25 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 from sklearn.metrics import confusion_matrix
-import shap
+# SHAP import is not needed here if plots are called from explainability.py
 
-def save_plot(fig, filename, output_dir):
+def save_plot(fig_or_plt, filename, output_dir):
+    """Saves the current figure or a given figure object."""
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     filepath = os.path.join(output_dir, filename)
-    fig.savefig(filepath, bbox_inches='tight')
-    plt.close(fig)
+    
+    # Check if fig_or_plt is a Figure object or pyplot (plt)
+    if hasattr(fig_or_plt, 'savefig'): # It's a Figure object
+        fig_or_plt.savefig(filepath, bbox_inches='tight')
+        plt.close(fig_or_plt) # Close the figure object
+    else: # Assume it's pyplot (plt)
+        fig_or_plt.savefig(filepath, bbox_inches='tight')
+        fig_or_plt.clf() # Clear the current figure in pyplot
+        plt.close('all') # Close all pyplot figures
+
     print(f"Plot saved to {filepath}")
+
 
 def plot_confusion_matrix_custom(y_true, y_pred, classes, model_name, output_dir):
     cm = confusion_matrix(y_true, y_pred)
@@ -34,32 +44,3 @@ def plot_confusion_matrix_custom(y_true, y_pred, classes, model_name, output_dir
     fig.tight_layout()
     ax.grid(False)
     save_plot(fig, f"{model_name.replace(' ', '_')}_confusion_matrix.png", output_dir)
-
-def plot_shap_beeswarm(shap_values, X_display, model_name, output_dir, class_index=None, class_name=None):
-    plt.figure()
-    if class_index is not None: # For multi-class
-        shap.plots.beeswarm(shap_values[:,:,class_index], X_display, show=False)
-        title_suffix = f" (Class: {class_name})"
-        filename_suffix = f"_class_{class_name}"
-    else: # For binary or aggregated multi-class
-        shap.plots.beeswarm(shap_values, X_display, show=False)
-        title_suffix = ""
-        filename_suffix = ""
-
-    plt.title(f"SHAP Beeswarm Plot: {model_name}{title_suffix}")
-    save_plot(plt.gcf(), f"{model_name.replace(' ', '_')}_shap_beeswarm{filename_suffix}.png", output_dir)
-
-
-def plot_shap_summary(shap_values, X_display, model_name, output_dir, class_index=None, class_name=None, figsize=(10,8)):
-    plt.figure(figsize=figsize)
-    if class_index is not None: # For multi-class
-        shap.summary_plot(shap_values[:,:,class_index], X_display, show=False)
-        title_suffix = f" (Class: {class_name})"
-        filename_suffix = f"_class_{class_name}"
-    else: # For binary or aggregated multi-class
-        shap.summary_plot(shap_values, X_display, show=False)
-        title_suffix = ""
-        filename_suffix = ""
-
-    plt.title(f"SHAP Summary Plot: {model_name}{title_suffix}")
-    save_plot(plt.gcf(), f"{model_name.replace(' ', '_')}_shap_summary{filename_suffix}.png", output_dir)
